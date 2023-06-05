@@ -52,6 +52,7 @@ def set_user_logged_in(logged_in):
 def is_user_logged_in():
     # Verificar estado do login a partir do arquivo
     if not os.path.exists('login_status.json'):
+        set_user_logged_in(False)  # Criar o arquivo se não existir
         return False
     with open('login_status.json', 'r') as file:
         logged_in = json.load(file)
