@@ -26,6 +26,17 @@ def view_tasks(tasks):
         st.subheader('Tarefas:')
         df = pd.DataFrame(tasks)
         st.dataframe(df)
+
+        task_index = st.selectbox('Selecione a tarefa', df.index)
+        selected_task = tasks[task_index]
+
+        if st.button('Finalizar Tarefa'):
+            complete_task(selected_task)
+            st.success('Tarefa finalizada com sucesso!')
+
+        if st.button('Excluir Tarefa'):
+            delete_task(tasks, task_index)
+            st.success('Tarefa excluída com sucesso!')
     else:
         st.info('Nenhuma tarefa adicionada ainda.')
 
@@ -46,6 +57,14 @@ def add_task(tasks):
         tasks.append(task)
         save_tasks(tasks)
         st.success('Tarefa adicionada com sucesso!')
+
+def complete_task(task):
+    task['Finalizada'] = True
+    save_tasks(tasks)
+
+def delete_task(tasks, index):
+    tasks.pop(index)
+    save_tasks(tasks)
 
 def load_tasks():
     with open('tasks.json', 'r') as file:
