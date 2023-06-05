@@ -40,9 +40,12 @@ def main():
         if st.button('Editar Tarefa'):
             edit_task(selected_task)
 
-        if st.button('Finalizar Tarefa'):
-            complete_task(selected_task)
-            st.success('Tarefa finalizada com sucesso!')
+        if selected_task['Finalizada']:
+            st.warning('Esta tarefa já foi finalizada!')
+        else:
+            if st.button('Finalizar Tarefa'):
+                complete_task(selected_task)
+                st.success('Tarefa finalizada com sucesso!')
 
         if st.button('Excluir Tarefa'):
             delete_task(tasks, task_index)
@@ -74,11 +77,11 @@ def delete_task(tasks, index):
     save_tasks(tasks)
 
 def load_tasks():
-    with open('tasks.json', 'r') as file:
-        try:
+    try:
+        with open('tasks.json', 'r') as file:
             tasks = json.load(file)
-        except json.JSONDecodeError:
-            tasks = []
+    except (FileNotFoundError, json.JSONDecodeError):
+        tasks = []
     return tasks
 
 def save_tasks(tasks):
