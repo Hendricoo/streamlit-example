@@ -6,6 +6,10 @@ import os
 def main():
     st.title('Sistema de Planner')
 
+    # Tela de login
+    if not is_user_logged_in():
+        login()
+
     # Verificar se o arquivo JSON existe
     if not os.path.exists('tasks.json'):
         with open('tasks.json', 'w') as file:
@@ -20,6 +24,38 @@ def main():
         view_tasks(tasks)
     elif choice == 'Adicionar Tarefa':
         add_task(tasks)
+
+def login():
+    st.subheader('Login')
+    username = st.text_input('Usuário')
+    password = st.text_input('Senha', type='password')
+    if st.button('Entrar'):
+        if authenticate(username, password):
+            st.success('Login bem-sucedido!')
+            set_user_logged_in(True)
+        else:
+            st.error('Usuário ou senha inválidos.')
+
+def authenticate(username, password):
+    # Verificar se o usuário e senha correspondem a algum perfil existente
+    profiles = load_profiles()
+    for profile in profiles:
+        if profile['username'] == username and profile['password'] == password:
+            return True
+    return False
+
+def set_user_logged_in(logged_in):
+    # Salvar estado do login em um arquivo
+    with open('login_status.json', 'w') as file:
+        json.dump(logged_in, file)
+
+def is_user_logged_in():
+    # Verificar estado do login a partir do arquivo
+    if not os.path.exists('login_status.json'):
+        return False
+    with open('login_status.json', 'r') as file:
+        logged_in = json.load(file)
+    return logged_in
 
 def view_tasks(tasks):
     if tasks:
@@ -77,6 +113,14 @@ def load_tasks():
 def save_tasks(tasks):
     with open('tasks.json', 'w') as file:
         json.dump(tasks, file, indent=4)
+
+def load_profiles():
+    try:
+        with open('profiles.json', 'r') as file:
+            profiles = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        profiles = []
+    return profiles
 
 if __name__ == '__main__':
     main()
