@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
+import os
 
 def main():
     st.title('Sistema de Planner')
@@ -61,7 +62,7 @@ def register_user(username, password):
     profiles.append(new_profile)
 
     # Salvar perfis atualizados
-    json.save_profiles(profiles)
+    save_profiles(profiles)
 
     return True
 
@@ -73,6 +74,17 @@ def is_user_logged_in():
     # Verificar estado do login na sessão
     logged_in = st.session_state.get('logged_in', False)
     return logged_in
+
+def load_profiles():
+    profiles = []
+    if os.path.exists('profiles.json'):
+        with open('profiles.json', 'r') as file:
+            profiles = json.load(file)
+    return profiles
+
+def save_profiles(profiles):
+    with open('profiles.json', 'w') as file:
+        json.dump(profiles, file)
 
 def view_tasks(tasks):
     if tasks:
