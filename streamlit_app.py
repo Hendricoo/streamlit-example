@@ -30,6 +30,15 @@ def login():
         else:
             st.error('Usuário ou senha inválidos.')
 
+    st.subheader('Registrar novo usuário')
+    new_username = st.text_input('Novo usuário')
+    new_password = st.text_input('Nova senha', type='password')
+    if st.button('Registrar'):
+        if register_user(new_username, new_password):
+            st.success('Usuário registrado com sucesso!')
+        else:
+            st.error('Erro ao registrar usuário.')
+
 def authenticate(username, password):
     # Verificar se o usuário e senha correspondem a algum perfil existente
     profiles = load_profiles()
@@ -37,6 +46,24 @@ def authenticate(username, password):
         if profile['username'] == username and profile['password'] == password:
             return True
     return False
+
+def register_user(username, password):
+    # Carregar os perfis existentes
+    profiles = load_profiles()
+
+    # Verificar se o usuário já existe
+    for profile in profiles:
+        if profile['username'] == username:
+            return False
+
+    # Adicionar novo perfil de usuário
+    new_profile = {'username': username, 'password': password}
+    profiles.append(new_profile)
+
+    # Salvar perfis atualizados
+    save_profiles(profiles)
+
+    return True
 
 def set_user_logged_in(logged_in):
     # Armazenar estado do login na sessão
