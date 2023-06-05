@@ -5,19 +5,19 @@ import json
 def main():
     st.title('Sistema de Planner')
 
-    # Tela de login
-    if not is_user_logged_in():
+    # Verificar se o usuário está logado
+    if is_user_logged_in():
+        tasks = load_tasks()
+
+        menu_options = ['Visualizar Tarefas', 'Adicionar Tarefa']
+        choice = st.sidebar.selectbox('Menu', menu_options)
+
+        if choice == 'Visualizar Tarefas':
+            view_tasks(tasks)
+        elif choice == 'Adicionar Tarefa':
+            add_task(tasks)
+    else:
         login()
-
-    tasks = load_tasks()
-
-    menu_options = ['Visualizar Tarefas', 'Adicionar Tarefa']
-    choice = st.sidebar.selectbox('Menu', menu_options)
-
-    if choice == 'Visualizar Tarefas':
-        view_tasks(tasks)
-    elif choice == 'Adicionar Tarefa':
-        add_task(tasks)
 
 def login():
     st.subheader('Login')
@@ -46,6 +46,7 @@ def is_user_logged_in():
     # Verificar estado do login na sessão
     logged_in = st.session_state.get('logged_in', False)
     return logged_in
+
 def view_tasks(tasks):
     if tasks:
         st.subheader('Tarefas:')
@@ -64,6 +65,7 @@ def view_tasks(tasks):
             st.success('Tarefa excluída com sucesso!')
     else:
         st.info('Nenhuma tarefa adicionada ainda.')
+pass
 
 def add_task(tasks):
     st.subheader('Adicionar Tarefa')
@@ -82,7 +84,7 @@ def add_task(tasks):
         tasks.append(task)
         save_tasks(tasks)
         st.success('Tarefa adicionada com sucesso!')
-
+pass
 def complete_task(task):
     task['Finalizada'] = True
     save_tasks(tasks)
