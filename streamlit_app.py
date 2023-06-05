@@ -54,7 +54,10 @@ def main():
 
 def load_tasks():
     with open('tasks.json', 'r') as file:
-        tasks = json.load(file)
+        try:
+            tasks = json.load(file)
+        except json.JSONDecodeError:
+            tasks = []
     return tasks
 
 def save_tasks(tasks):
