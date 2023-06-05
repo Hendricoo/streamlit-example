@@ -1,11 +1,16 @@
 import streamlit as st
 import pandas as pd
 import json
+import os
 
 def main():
     st.title('Sistema de Planner')
 
     # Verificar se o arquivo JSON existe
+    if not os.path.exists('tasks.json'):
+        with open('tasks.json', 'w') as file:
+            json.dump([], file)
+
     tasks = load_tasks()
 
     if st.button('Adicionar Tarefa'):
@@ -48,11 +53,8 @@ def main():
         st.info('Nenhuma tarefa adicionada ainda.')
 
 def load_tasks():
-    try:
-        with open('tasks.json', 'r') as file:
-            tasks = json.load(file)
-    except FileNotFoundError:
-        tasks = []
+    with open('tasks.json', 'r') as file:
+        tasks = json.load(file)
     return tasks
 
 def save_tasks(tasks):
