@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import json
-import os
 
 def main():
     st.title('Sistema de Planner')
@@ -9,11 +8,6 @@ def main():
     # Tela de login
     if not is_user_logged_in():
         login()
-
-    # Verificar se o arquivo JSON existe
-    if not os.path.exists('tasks.json'):
-        with open('tasks.json', 'w') as file:
-            json.dump([], file)
 
     tasks = load_tasks()
 
@@ -45,19 +39,13 @@ def authenticate(username, password):
     return False
 
 def set_user_logged_in(logged_in):
-    # Salvar estado do login em um arquivo
-    with open('login_status.json', 'w') as file:
-        json.dump(logged_in, file)
+    # Armazenar estado do login na sessão
+    st.session_state['logged_in'] = logged_in
 
 def is_user_logged_in():
-    # Verificar estado do login a partir do arquivo
-    if not os.path.exists('login_status.json'):
-        set_user_logged_in(False)  # Criar o arquivo se não existir
-        return False
-    with open('login_status.json', 'r') as file:
-        logged_in = json.load(file)
+    # Verificar estado do login na sessão
+    logged_in = st.session_state.get('logged_in', False)
     return logged_in
-
 def view_tasks(tasks):
     if tasks:
         st.subheader('Tarefas:')
