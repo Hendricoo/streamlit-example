@@ -21,7 +21,8 @@ def main():
         task = {
             'Nome': task_name,
             'Descrição': task_description,
-            'Data de vencimento': str(task_due_date)
+            'Data de vencimento': str(task_due_date),
+            'Finalizada': False
         }
 
         tasks.append(task)
@@ -33,24 +34,44 @@ def main():
         df = pd.DataFrame(tasks)
         st.dataframe(df)
 
-        task_index = st.selectbox('Selecione a tarefa para editar', df.index)
+        task_index = st.selectbox('Selecione a tarefa', df.index)
         selected_task = tasks[task_index]
 
-        new_name = st.text_input('Nome da tarefa', selected_task['Nome'])
-        new_description = st.text_area('Descrição da tarefa', selected_task['Descrição'])
-        new_due_date = st.date_input('Data de vencimento', pd.to_datetime(selected_task['Data de vencimento']).date())
+        if st.button('Editar Tarefa'):
+            edit_task(selected_task)
 
-        if st.button('Atualizar Tarefa'):
-            tasks[task_index] = {
-                'Nome': new_name,
-                'Descrição': new_description,
-                'Data de vencimento': str(new_due_date)
-            }
-            save_tasks(tasks)
-            st.success('Tarefa atualizada com sucesso!')
+        if st.button('Finalizar Tarefa'):
+            complete_task(selected_task)
+            st.success('Tarefa finalizada com sucesso!')
+
+        if st.button('Excluir Tarefa'):
+            delete_task(tasks, task_index)
+            st.success('Tarefa excluída com sucesso!')
 
     else:
         st.info('Nenhuma tarefa adicionada ainda.')
+
+def edit_task(task):
+    st.sidebar.subheader('Editar Tarefa')
+    new_name = st.sidebar.text_input('Nome da tarefa', task['Nome'])
+    new_description = st.sidebar.text_area('Descrição da tarefa', task['Descrição'])
+    new_due_date = st.sidebar.date_input('Data de vencimento', pd.to_datetime(task['Data de vencimento']).date())
+
+    task['Nome'] = new_name
+    task['Descrição'] = new_description
+    task['Data de vencimento'] = str(new_due_date)
+
+    if st.sidebar.button('Atualizar Tarefa'):
+        save_tasks(tasks)
+        st.sidebar.success('Tarefa atualizada com sucesso!')
+
+def complete_task(task):
+    task['Finalizada'] = True
+    save_tasks(tasks)
+
+def delete_task(tasks, index):
+    tasks.pop(index)
+    save_tasks(tasks)
 
 def load_tasks():
     with open('tasks.json', 'r') as file:
