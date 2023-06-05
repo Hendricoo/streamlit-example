@@ -61,7 +61,7 @@ def register_user(username, password):
     profiles.append(new_profile)
 
     # Salvar perfis atualizados
-    save_profiles(profiles)
+    json.save_profiles(profiles)
 
     return True
 
