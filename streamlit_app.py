@@ -8,7 +8,6 @@ st.markdown('''
 ## Suba um arquivo e vejamos o que acontece :smile::heart:
 ''')
 
-
 arquivo = st.file_uploader(
     'Suba seu arquivo aqui!',
     type=['jpg', 'png', 'py', 'wav', 'csv', 'json']
@@ -19,18 +18,19 @@ st.text_input('Senha', type='password')
 
 if arquivo:
     print(arquivo.type)
-    match arquivo.type.split('/'):
-        case 'application', 'json':
-            st.json(loads(arquivo.read()))
-        case 'image', _:
-            st.image(arquivo)
-        case 'text', 'csv':
-            df = read_csv(arquivo).transpose()
-            st.dataframe(df)
-            st.bar_chart(df)
-        case 'text', 'x-python':
-            st.code(arquivo.read().decode())
-        case 'audio', _:
-            st.audio(arquivo)
+    arquivo_type = arquivo.type.split('/')
+    
+    if arquivo_type[0] == 'application' and arquivo_type[1] == 'json':
+        st.json(loads(arquivo.read()))
+    elif arquivo_type[0] == 'image':
+        st.image(arquivo)
+    elif arquivo_type[0] == 'text' and arquivo_type[1] == 'csv':
+        df = read_csv(arquivo).transpose()
+        st.dataframe(df)
+        st.bar_chart(df)
+    elif arquivo_type[0] == 'text' and arquivo_type[1] == 'x-python':
+        st.code(arquivo.read().decode())
+    elif arquivo_type[0] == 'audio':
+        st.audio(arquivo)
 else:
     st.error('Ainda não tenho arquivo!')
