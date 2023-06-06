@@ -19,7 +19,7 @@ st.text_input('Senha', type='password')
 
 if arquivo:
     print(arquivo.type)
- match arquivo.type.split('/'):
+    match arquivo.type.split('/'):
         case 'application', 'json':
             st.json(loads(arquivo.read()))
         case 'image', _:
